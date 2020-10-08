@@ -1,0 +1,20 @@
+version: '2.1'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=task_management_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ../db_restore:/var/lib/postgresql/data
+#    command: psql -U postgres -f /var/lib/postgresql/data/create_db.sql
+  webserver:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8080"
+    volumes:
+      - .:/task_manager/
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
